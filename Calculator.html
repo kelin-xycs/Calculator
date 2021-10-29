@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>计算器</title>
+    <script type="text/javascript">
+
+
+        var _beginTime;
+
+
+        function btnSetWidthHeight_Click() {
+
+            var txt = document.getElementById("txtScript");
+
+            txt.style.width = document.getElementById("txtWidth").value;
+            txt.style.height = document.getElementById("txtHeight").value; 
+        }
+
+        function btnCalculate_Click() {
+
+            writeMsg("spanStatus", "计算中 ……");
+
+            _beginTime = new Date();
+
+            window.setTimeout(Calculate, 0);
+        }
+
+        function Calculate() {
+
+        
+            var script = document.getElementById("txtScript").value;
+
+
+            if (!script)
+            {
+                alert("计算脚本不能为空 。");
+                return;
+            }
+
+
+            try {
+
+                 var func = new Function(script);
+                 var result = func();
+            }
+            catch (e) {
+
+                var endTime = new Date().getTime();
+
+                alert("计算脚本错误 ： " + e + "\r\n详细错误信息可在浏览器控制台查看 。");
+                writeMsg("spanStatus", "计算异常终止 。 耗时 " + ((endTime - _beginTime) / 1000) + "秒 。");
+                writeMsg("spanResult", "");
+
+                throw e;
+            }
+            
+
+            writeMsg("spanStatus", "计算完成 。 耗时 " + ((new Date().getTime() - _beginTime) / 1000) + "秒 。");
+
+            writeMsg("spanResult", result);
+            
+        }
+
+        function writeMsg(id, msg) {
+
+            var span = document.getElementById(id);
+
+            span.innerText = msg;
+        }
+    </script>
+</head>
+<body>
+    在 计算脚本 文本框中用 javascript 书写计算脚本，计算脚本会作为一个 javascript 函数运行，用返回值返回结果，记得写 return 语句。
+    <br /><br />
+    设置 计算脚本 文本框 宽度 <input id="txtWidth" value="800px" /> 高度 <input id="txtHeight" value="200px" /> <input type="button" value="设置" onclick="btnSetWidthHeight_Click();" style="width: 100px" />
+    <br /><br />
+    计算脚本<br />
+        <textarea id="txtScript" style="width:800px; height:200px;">
+//  计算  lim ( tan x - sin x ) / x ³ ,  x -> 0
+
+var x = 0.01;
+
+var tan = Math.tan(x);
+var sin = Math.sin(x);
+var x3 = Math.pow(x, 3);
+
+var result = (tan - sin)/x3;
+
+return "x = " + x + "\r\n" + "tan x = " + tan + "\r\n" + "sin x = " + sin + "\r\n" + "x ³ = " + x3 + "\r\n" + "( tan x - sin x ) / x ³ = " + result;
+    </textarea><br /><br />
+    <input type="button" value="计算" onclick="btnCalculate_Click();" style="width: 100px" />
+    <span id="spanStatus"></span><br /><br />
+    <span id="spanResult"></span><br /><br />
+</body>
+</html>
